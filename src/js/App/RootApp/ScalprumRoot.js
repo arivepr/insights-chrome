@@ -1,10 +1,10 @@
-import React, { Fragment, lazy, Suspense, useEffect, useState } from 'react';
+import React, { Fragment, lazy, Suspense, useContext, useEffect, useState } from 'react';
 import { ScalprumProvider } from '@scalprum/react-core';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { QuickStartContainer } from '@patternfly/quickstarts';
+import { QuickStartContainer, QuickStartContext, useLocalStorage } from '@patternfly/quickstarts';
 
 import DefaultLayout from './DefaultLayout';
 import NavLoader from '../Sidenav/Navigation/Loader';
@@ -14,6 +14,32 @@ import { disableQuickstarts, populateQuickstartsCatalog, toggleFeedbackModal } f
 import historyListener from '../../utils/historyListener';
 import { isFedRamp } from '../../utils';
 import useQuickstartsStates from '../QuickStart/useQuickstartsStates';
+
+const QSHOC = ({ children, ...props }) => {
+  const { activeQuickStartID } = useContext(QuickStartContext);
+
+  // useEffect(() => {
+  //   const body = document.getElementsByTagName('body')[0];
+  //   activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
+  // }, [activeQuickStartID]);
+
+  // useEffect(() => {
+  //   const body = document.getElementsByTagName('body')[0];
+  //   activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
+  //   console.log('VERIFICANDO si hay un quickstart: ', activeQuickStartID);
+  //   console.log('VERIFICANDO que hay en mi classList: ', body.classList);
+  // }, [activeQuickStartID]);
+
+  useEffect(() => {
+    console.log('DIOOOOOO verificando activeQuickStartID: ', activeQuickStartID);
+  }, [activeQuickStartID]);
+
+  useEffect(() => {
+    console.log('Verificando que ostias tenemos en el contexto: ', QuickStartContext);
+  }, [QuickStartContext]);
+
+  return <QuickStartContainer {...props}>{children}</QuickStartContainer>;
+};
 
 const Navigation = lazy(() => import('../Sidenav/Navigation'));
 const LandingNav = lazy(() => import('../Sidenav/LandingNav'));
@@ -32,7 +58,7 @@ const loadQS = async () => {
 };
 
 const QSWrapper = ({ quickstartsLoaded, children, ...props }) =>
-  quickstartsLoaded ? <QuickStartContainer {...props}>{children}</QuickStartContainer> : <Fragment>{children}</Fragment>;
+  quickstartsLoaded ? <QSHOC {...props}>{children}</QSHOC> : <Fragment>{children}</Fragment>;
 
 QSWrapper.propTypes = {
   children: PropTypes.node,
@@ -95,8 +121,10 @@ const ScalprumRoot = ({ config, ...props }) => {
   }, []);
 
   useEffect(() => {
-    // const body = document.getElementsByTagName('body')[0];
-    // activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
+    const body = document.getElementsByTagName('body')[0];
+    activeQuickStartID !== '' ? body.classList.add('quickstarts-open') : body.classList.remove('quickstarts-open');
+    console.log('VERIFICANDO si hay un quickstart: ', activeQuickStartID);
+    console.log('VERIFICANDO que hay en mi classList: ', body.classList);
   }, [activeQuickStartID]);
 
   return (
