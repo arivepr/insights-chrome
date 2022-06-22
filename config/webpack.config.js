@@ -108,10 +108,10 @@ const commonConfig = ({ dev }) => {
         index: `${publicPath}index.html`,
       },
       https: true,
-      port: 1337,
+      port: 8082,
       ...proxy({
         env: 'stage-beta',
-        port: 1337,
+        port: 8082,
         appUrl: [/^\/*$/, /^\/beta\/*$/],
         useProxy: true,
         publicPath,

@@ -19,6 +19,8 @@ const RootApp = (props) => {
   const { helpTopics, addHelpTopics, disableTopics, enableTopics } = useHelpTopicState();
   const dispatch = useDispatch();
   const activeModule = useSelector(({ chrome: { activeModule } }) => activeModule);
+  console.log('ITS A MEEEEE, CHROOOOOMEEE!!!!!!!');
+
   const quickStarts = useSelector(
     ({
       chrome: {
