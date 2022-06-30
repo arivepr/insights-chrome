@@ -50,6 +50,7 @@ const useNavigation = () => {
   const currentNamespace = pathname.split('/')[1];
   const [schema] = useSelector(({ chrome: { navigation, activeApp } }) => [navigation[currentNamespace], activeApp]);
 
+  console.log('TESTING OUT CHROME NAVIGATION!!!!!: ', pathname);
   /**
    * We need a side effect to get the value into the mutation observer closure
    */
