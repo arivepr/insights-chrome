@@ -1,3 +1,4 @@
+import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
@@ -65,7 +66,6 @@ describe('Drawer panel functionality', () => {
 
   test('Marking notification as read successfully', () => {
     const store = mockStore(stateWithNotifications);
-    console.log('Looking at our store object: ', store);
 
     const renderedResult = renderComponent(store);
 
