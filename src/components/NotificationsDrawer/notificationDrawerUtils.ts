@@ -41,7 +41,7 @@ export const readTestData = [
     read: true,
     source: 'MARS',
     created: '25 mins ago',
-  }
+  },
 ];
 
 export const filterConfig = [

@@ -1,14 +1,10 @@
-import { render, fireEvent } from '@testing-library/react'
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { fireEvent, render } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
 import DrawerPanel from './DrawerPanelContent';
-import { 
-  markNotificationAsRead,
-  markNotificationAsUnread,
-  markAllNotificationsAsRead,
-  markAllNotificationsAsUnread
-} from '../../redux/actions';
-import { testData, readTestData } from './notificationDrawerUtils';
+import { BrowserRouter } from 'react-router-dom';
+import { markAllNotificationsAsRead, markAllNotificationsAsUnread, markNotificationAsRead, markNotificationAsUnread } from '../../redux/actions';
+import { readTestData, testData } from './notificationDrawerUtils';
 
 const mockStore = configureMockStore();
 
@@ -18,8 +14,8 @@ const stateWithNotifications = {
       data: testData,
       isExpanded: true,
       count: 3,
-    }
-  }
+    },
+  },
 };
 
 const stateWithoutNotifications = {
@@ -28,9 +24,9 @@ const stateWithoutNotifications = {
       data: [],
       isExpanded: true,
       count: 0,
-    }
-  }
-}
+    },
+  },
+};
 
 const stateWithReadNotifications = {
   chrome: {
@@ -38,43 +34,40 @@ const stateWithReadNotifications = {
       data: readTestData,
       isExpanded: true,
       count: 2,
-    }
-  }
-}
+    },
+  },
+};
+
+const renderComponent = (store) => {
+  return render(
+    <Provider store={store}>
+      <BrowserRouter>
+        <DrawerPanel />
+      </BrowserRouter>
+    </Provider>
+  );
+};
 
 describe('Drawer panel functionality', () => {
   test('Renders the drawer panel empty successfully. ', () => {
     const store = mockStore(stateWithoutNotifications);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
-
+    const renderedResult = renderComponent(store);
     expect(renderedResult.getByText('Notifications')).toBeInTheDocument();
   });
 
   test('Renders notification drawer with notifications successfully', () => {
     const store = mockStore(stateWithNotifications);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
-    
+    const renderedResult = renderComponent(store);
     expect(renderedResult.getByText('Test Notification 1')).toBeInTheDocument();
   });
 
   test('Marking notification as read successfully', () => {
     const store = mockStore(stateWithNotifications);
+    console.log('Looking at our store object: ', store);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
+    const renderedResult = renderComponent(store);
 
     const checkbox = renderedResult.getAllByRole('checkbox');
     fireEvent.click(checkbox[0]);
@@ -86,11 +79,7 @@ describe('Drawer panel functionality', () => {
   test('Mark notification as unread successfully', () => {
     const store = mockStore(stateWithReadNotifications);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
+    const renderedResult = renderComponent(store);
 
     const checkbox = renderedResult.getAllByRole('checkbox');
     fireEvent.click(checkbox[0]);
@@ -102,15 +91,11 @@ describe('Drawer panel functionality', () => {
   test('Mark all notifications as read successfully', () => {
     const store = mockStore(stateWithNotifications);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
+    const renderedResult = renderComponent(store);
 
-    const actionMenuButton = renderedResult.getByRole('button', { name: /Drawer panel actions menu/i });
+    const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
     fireEvent.click(actionMenuButton);
-    
+
     const actionDropdownItems = renderedResult.getAllByRole('menuitem');
     fireEvent.click(actionDropdownItems[0]);
 
@@ -121,15 +106,11 @@ describe('Drawer panel functionality', () => {
   test('Mark all notifications as unread successfully', () => {
     const store = mockStore(stateWithReadNotifications);
 
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
+    const renderedResult = renderComponent(store);
 
-    const actionMenuButton = renderedResult.getByRole('button', { name: /Drawer panel actions menu/i });
+    const actionMenuButton = renderedResult.getByRole('button', { name: /Notifications actions dropdown/i });
     fireEvent.click(actionMenuButton);
-    
+
     const actionDropdownItems = renderedResult.getAllByRole('menuitem');
     fireEvent.click(actionDropdownItems[1]);
 
@@ -139,19 +120,16 @@ describe('Drawer panel functionality', () => {
 
   test('Select filter successfully', () => {
     const store = mockStore(stateWithNotifications);
-    
-    const renderedResult = render(
-      <Provider store={store}>
-        <DrawerPanel />
-      </Provider>
-    );
 
-    const filterMenuButton = renderedResult.getByRole('button', { name: /Notifications filters/i });
+    const renderedResult = renderComponent(store);
+
+    const filterMenuButton = renderedResult.getByRole('button', { name: /Notifications filter/i });
     fireEvent.click(filterMenuButton);
 
     const filterMenuItems = renderedResult.getAllByRole('menuitem');
-    fireEvent.click(filterMenuItems[0]);
+    fireEvent.click(filterMenuItems[2]);
 
+    const filteredNotification = renderedResult.getAllByRole('listitem');
+    expect(filteredNotification.length === 1);
   });
 });
-
